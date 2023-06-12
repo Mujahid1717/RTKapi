@@ -12,7 +12,8 @@ const App = () => {
 
   useEffect(()=>{
     const apiCall = async () => {
-      try{
+
+      try {
       setLoader(true)
       let response = await (await fetch(BASE_URL)).json()
       console.log(response, 'responsssee')
