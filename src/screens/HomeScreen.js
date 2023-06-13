@@ -1,45 +1,39 @@
-import { StyleSheet, Text, View, SafeAreaView, ActivityIndicator } from 'react-native';
-import React, { useEffect, useState } from 'react';
-
-const BASE_URL = 'https://jsonplaceholder.typicode.com/posts/1'
-
+import { StyleSheet, Text, View } from 'react-native';
+import { useGetDataQuery,useGetDataByIdQuery, useAddNewPostMutation,useDeletePostMutation} from '../../src/services/GetApiCall';
+import { Button } from 'react-native';
+import { SafeAreaView } from 'react-native';
 
 const HomeScreen = () => {
-  const [loader,setLoader] = useState(true);
-  const [data,setData] = useState(null);
-  const [error,setError] = useState();
-  
+  const {data,isError,isFetching,isLoading,isSuccess} = useGetDataQuery();
+  const res = useGetDataByIdQuery(1);
+  // console.log('databyid',JSON.stringify(res))
+  const [addPost]= useAddNewPostMutation();
+  const [deletePost] = useDeletePostMutation();
 
-  useEffect(()=>{
-    const apiCall = async () => {
-
-      try {
-      setLoader(true)
-      let response = await (await fetch(BASE_URL)).json()
-      console.log(response, 'responsssee')
-      setData(response)
-      setLoader(false)
-      }
-      catch{
-        setError(error)
-        setLoader(false)
-      }
-    }
-    apiCall()
-    
-  },[])
-  if (loader){
-    <View style = {{flex:1,alignContent:'center',justifyContent:'center'}}>
-      <ActivityIndicator color = 'black' size='large'></ActivityIndicator>
-    </View>
+  const addNewPost = async()=>{
+    const response = await addPost({
+        title: 'test product',
+        price: 13.5,
+        description: 'lorem ipsum set',
+        image: 'https://i.pravatar.cc',
+        category: 'electronic'
+  })
+  console.log('addingDATa',response)
   }
+  const deleteData = async() =>{
+    const data = await deletePost('6')
+    console.log('deleteData',data)
 
+  }
+  // console.log('mydata: '+ JSON.stringify(data)+' '+ isError +' '+isSuccess +' '+isLoading+" "+isFetching)
   return (
     <SafeAreaView>
-    <View>
-      <Text style={{color:'black',fontSize:20,textAlign:'center',margin:20}}>{data?.title}</Text>
+    <View >
+      <Text>API</Text>
+      <Button title="Api Call" onPress={()=>{deleteData()}} />
     </View>
     </SafeAreaView>
+    
   );
 };
 
